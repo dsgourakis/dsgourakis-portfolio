@@ -1,6 +1,6 @@
 # dsgourakis.com
 
-[![CI](https://github.com/dsgourakis/dsgourakis/actions/workflows/ci.yml/badge.svg)](https://github.com/dsgourakis/dsgourakis/actions/workflows/ci.yml)
+[![CI](https://github.com/dsgourakis/dsgourakis-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/dsgourakis/dsgourakis-portfolio/actions/workflows/ci.yml)
 
 This is the source code for my portfolio site, [dsgourakis.com](https://dsgourakis.com).
 

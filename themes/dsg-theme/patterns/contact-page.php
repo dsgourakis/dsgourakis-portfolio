@@ -35,7 +35,7 @@
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"className":"contact-detail"} -->
-		<p class="contact-detail"><span class="contact-detail__label">// <?php esc_html_e( 'elsewhere', 'dsg-theme' ); ?></span> <a href="https://www.linkedin.com/">LinkedIn</a> · <a href="https://github.com/">GitHub</a></p>
+		<p class="contact-detail"><span class="contact-detail__label">// <?php esc_html_e( 'elsewhere', 'dsg-theme' ); ?></span> <a href="https://www.linkedin.com/in/dimitris-sgourakis/" target="_blank" rel="noreferrer noopener">LinkedIn</a></p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"className":"contact-detail"} -->

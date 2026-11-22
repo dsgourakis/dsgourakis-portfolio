@@ -336,6 +336,15 @@ main.is-entering,
 }
 
 /*
+ * Pushed to the far right; the rest of the bar stays together on the left.
+ * "#top" scrolls to the top of the page without needing an element with that
+ * id (HTML spec), and hash links are left alone by the client-side router.
+ */
+.site-footer__top {
+	margin-left: auto;
+}
+
+/*
  * Decoration, like the hero's code tags.
  * `/ ""` hides it from screen readers.
  */

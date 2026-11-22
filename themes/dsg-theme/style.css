@@ -558,13 +558,13 @@ main[data-page="contact"] ~ * .site-footer__contact {
 
 .about-intro__text {
 	flex: 1 1 32rem;
-	gap: var(--wp--preset--spacing--40);
+	gap: var(--wp--preset--spacing--30);
 	max-width: 46rem;
 }
 
 .about-facts {
 	flex: 1 1 18rem;
-	gap: var(--wp--preset--spacing--40);
+	gap: var(--wp--preset--spacing--30);
 	padding: var(--wp--preset--spacing--60);
 	border: 1px solid var(--wp--preset--color--border);
 	border-radius: var(--wp--custom--radius--panel);

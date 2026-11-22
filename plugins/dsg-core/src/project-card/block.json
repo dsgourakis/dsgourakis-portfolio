@@ -41,6 +41,10 @@
 		"featured": {
 			"type": "boolean",
 			"default": false
+		},
+		"imagePriority": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {

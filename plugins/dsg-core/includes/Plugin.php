@@ -14,6 +14,7 @@ use DSG\Core\Contact\ContactEndpoint;
 use DSG\Core\Contact\FallbackHandler;
 use DSG\Core\Contact\Mail;
 use DSG\Core\Contact\Messages;
+use DSG\Core\Media\ImageFormats;
 use DSG\Core\Navigation\ClientNavigation;
 use DSG\Core\PostTypes\Project;
 use DSG\Core\Seo;
@@ -66,6 +67,7 @@ final class Plugin {
 		( new Copyright() )->register_hooks();
 		( new PageLabel() )->register_hooks();
 		( new ClientNavigation() )->register_hooks();
+		( new ImageFormats() )->register_hooks();
 		( new ResumeLink() )->register_hooks();
 		( new Messages() )->register_hooks();
 		( new Mail() )->register_hooks();

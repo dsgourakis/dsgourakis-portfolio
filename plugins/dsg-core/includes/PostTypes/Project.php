@@ -230,9 +230,11 @@ class Project {
 	 * @param \WP_Post  $project  The Project.
 	 * @param bool|null $featured Show it as featured. Null (the default)
 	 *                            uses the Project's own "Featured" checkbox.
+	 * @param bool      $priority Load the image right away, at high priority:
+	 *                            for the first card, likely above the fold.
 	 * @return string Card HTML.
 	 */
-	public static function render_card( \WP_Post $project, ?bool $featured = null ): string {
+	public static function render_card( \WP_Post $project, ?bool $featured = null, bool $priority = false ): string {
 		$image_id     = (int) get_post_thumbnail_id( $project );
 		$technologies = wp_get_post_terms( $project->ID, self::TAXONOMY, array( 'fields' => 'names' ) );
 
@@ -240,13 +242,14 @@ class Project {
 			array(
 				'blockName'    => 'dsg/project-card',
 				'attrs'        => array(
-					'title'        => get_the_title( $project ),
-					'summary'      => get_the_excerpt( $project ),
-					'url'          => get_permalink( $project ),
-					'imageId'      => $image_id,
-					'imageAlt'     => $image_id ? (string) get_post_meta( $image_id, '_wp_attachment_image_alt', true ) : '',
-					'technologies' => is_wp_error( $technologies ) ? array() : $technologies,
-					'featured'     => $featured ?? self::is_featured( $project->ID ),
+					'title'         => get_the_title( $project ),
+					'summary'       => get_the_excerpt( $project ),
+					'url'           => get_permalink( $project ),
+					'imageId'       => $image_id,
+					'imageAlt'      => $image_id ? (string) get_post_meta( $image_id, '_wp_attachment_image_alt', true ) : '',
+					'technologies'  => is_wp_error( $technologies ) ? array() : $technologies,
+					'featured'      => $featured ?? self::is_featured( $project->ID ),
+					'imagePriority' => $priority,
 				),
 				'innerBlocks'  => array(),
 				'innerHTML'    => '',

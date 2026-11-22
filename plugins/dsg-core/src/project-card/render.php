@@ -11,16 +11,6 @@
  * - $content:    inner blocks' HTML (unused here)
  * - $block:      the WP_Block instance
  *
- * Accessibility:
- * - The whole card is one <article>; the title is the main link.
- * - The image link repeats the title link, so it's mouse-only:
- *   tabindex="-1" + aria-hidden keep it out of keyboard and screen reader use.
- * - "View the project" is a real link; hidden text adds the project title
- *   so it isn't announced as an ambiguous "View the project" several times.
- *
- * The counter (01, 02…) comes from CSS. A featured card gets the is-featured
- * class; CSS gives it the large layout only when it is the first card shown.
- *
  * @package DSG\Core
  */
 
@@ -32,6 +22,7 @@ $image_url    = $attributes['imageUrl'] ?? '';
 $image_alt    = $attributes['imageAlt'] ?? '';
 $technologies = $attributes['technologies'] ?? array();
 $featured     = ! empty( $attributes['featured'] );
+$priority     = ! empty( $attributes['imagePriority'] );
 
 // Adds the block's class plus any color/spacing chosen in the sidebar.
 $wrapper_attributes = get_block_wrapper_attributes(
@@ -46,15 +37,32 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			<?php endif; ?>
 			<?php
 			if ( $image_id ) {
-				// Outputs srcset/sizes too, so browsers download the right size.
+				/*
+				 * Outputs srcset too, so browsers download the right size.
+				 *
+				 * Loading: with imagePriority (the Project Grid sets it on its
+				 * first card), the image loads right away at high priority.
+				 * Otherwise WordPress decides. Inside post content it leaves the
+				 * first images eager; elsewhere (the Portfolio archive template)
+				 * it lazy-loads them all, which is why the grid flags the first card.
+				 *
+				 * `sizes` describes how wide the image is shown (see style.scss
+				 * and the grid's 781px breakpoint), so the browser doesn't pick
+				 * the 1024px file for a half-width card
+				 */
 				echo wp_get_attachment_image(
 					$image_id,
 					'large',
 					false,
 					array(
-						'alt'     => $image_alt,
-						'loading' => 'lazy',
-					)
+						'alt'   => $image_alt,
+						'sizes' => $featured
+							? '(max-width: 1000px) 100vw, 760px'
+							: '(max-width: 781px) 100vw, (max-width: 1280px) 50vw, 600px',
+					) + ( $priority ? array(
+						'loading'       => 'eager',
+						'fetchpriority' => 'high',
+					) : array() )
 				);
 			} else {
 				printf( '<img src="%s" alt="%s" loading="lazy" />', esc_url( $image_url ), esc_attr( $image_alt ) );

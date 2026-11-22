@@ -85,9 +85,11 @@ if ( ! $projects ) {
 
 $cards = '';
 
-foreach ( $projects as $project ) {
+foreach ( $projects as $index => $project ) {
 	// render_block() runs the Project Card's render.php, which escapes everything.
-	$cards .= Project::render_card( $project );
+	// The first card's image is usually above the fold (the Portfolio page's
+	// Largest Contentful Paint), so it loads right away at high priority.
+	$cards .= Project::render_card( $project, null, 0 === $index );
 }
 
 // Without the filter, the wrapper is the grid itself (as before).

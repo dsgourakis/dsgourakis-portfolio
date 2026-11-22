@@ -18,6 +18,5 @@ Thumbs.db
 .phpunit.result.cache
 .wp-env.override.json
 /uploads/
-/docs/todo
-/docs/deployment.md
-/docs/portfolio-remake-plan.md
+/docs/*
+/scripts/*

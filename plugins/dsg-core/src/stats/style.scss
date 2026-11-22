@@ -1,0 +1,19 @@
+/**
+ * Editor + frontend styles.
+ *
+ * The container owns the layout; each Stat only styles itself.
+ */
+
+.wp-block-dsg-stats {
+	display: flex;
+	gap: 1rem;
+	// The Stats inside are numbered 01, 02, 03 (see stat/style.scss).
+	counter-reset: dsg-stat;
+}
+
+@media (max-width: 781px) {
+
+	.wp-block-dsg-stats {
+		flex-direction: column;
+	}
+}

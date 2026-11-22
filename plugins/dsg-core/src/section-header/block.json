@@ -1,0 +1,56 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "dsg/section-header",
+	"version": "0.1.0",
+	"title": "Section Header",
+	"category": "design",
+	"icon": "heading",
+	"description": "A section title row: a large heading on the left and a short meta label or intro paragraph on the right, aligned to the bottom.",
+	"keywords": [ "heading", "title", "section", "intro" ],
+	"textdomain": "dsg-core",
+	"attributes": {
+		"align": {
+			"type": "string",
+			"default": "wide"
+		},
+		"heading": {
+			"type": "string",
+			"default": ""
+		},
+		"aside": {
+			"type": "string",
+			"default": ""
+		},
+		"style": {
+			"type": "object",
+			"default": {
+				"spacing": {
+					"margin": {
+						"bottom": "var:preset|spacing|40"
+					}
+				}
+			}
+		}
+	},
+	"styles": [
+		{ "name": "meta", "label": "Meta label", "isDefault": true },
+		{ "name": "intro", "label": "Intro paragraph" }
+	],
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"spacing": {
+			"margin": [ "top", "bottom" ]
+		}
+	},
+	"example": {
+		"attributes": {
+			"heading": "Selected work",
+			"aside": "// 03 projects"
+		}
+	},
+	"render": "file:./render.php",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

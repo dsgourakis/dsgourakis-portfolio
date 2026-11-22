@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "dsg/next-project",
+	"version": "0.1.0",
+	"title": "Next Project",
+	"category": "theme",
+	"icon": "arrow-right-alt",
+	"description": "A Project Card for the Project that comes after the one being shown (same order as the Project Grid), so visitors can keep browsing. Wraps round to the first.",
+	"keywords": [ "next", "project", "portfolio", "navigation" ],
+	"textdomain": "dsg-core",
+	"usesContext": [ "postId" ],
+	"attributes": {
+		"align": {
+			"type": "string",
+			"default": "wide"
+		}
+	},
+	"supports": {
+		"html": false,
+		"multiple": false,
+		"align": [ "wide", "full" ],
+		"spacing": {
+			"margin": [ "top", "bottom" ]
+		}
+	},
+	"render": "file:./render.php",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

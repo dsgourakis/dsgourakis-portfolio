@@ -1,12 +1,47 @@
-<!-- wp:group {"tagName":"footer","align":"full","style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|50"}}},"backgroundColor":"surface","layout":{"type":"constrained"}} -->
-<footer class="wp-block-group alignfull has-surface-background-color has-background" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--50)">
-	<!-- wp:group {"align":"wide","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
-	<div class="wp-block-group alignwide">
-		<!-- wp:paragraph {"fontSize":"small"} -->
-		<p class="has-small-font-size">© Dimitris Sgourakis</p>
-		<!-- /wp:paragraph -->
-		<!-- wp:paragraph {"fontSize":"small"} -->
-		<p class="has-small-font-size"><a href="https://github.com/">GitHub</a> · <a href="/accessibility/">Accessibility statement</a></p>
+<!-- wp:group {"tagName":"footer","align":"full","className":"site-footer","layout":{"type":"constrained"}} -->
+<footer class="wp-block-group alignfull site-footer">
+	<!-- wp:group {"tagName":"section","anchor":"contact","align":"wide","className":"site-footer__contact","layout":{"type":"flex","flexWrap":"wrap","verticalAlignment":"top"}} -->
+	<section id="contact" class="wp-block-group alignwide site-footer__contact">
+		<!-- wp:group {"className":"site-footer__intro","layout":{"type":"flex","orientation":"vertical"}} -->
+		<div class="wp-block-group site-footer__intro">
+			<!-- wp:paragraph {"className":"site-footer__label"} -->
+			<p class="site-footer__label">// contact</p>
+			<!-- /wp:paragraph -->
+
+			<!-- wp:heading {"fontSize":"display"} -->
+			<h2 class="wp-block-heading has-display-font-size">Have a design? Let's <mark style="background-color:rgba(0, 0, 0, 0)" class="has-inline-color has-accent-color">build it.</mark></h2>
+			<!-- /wp:heading -->
+
+			<!-- wp:paragraph {"textColor":"muted"} -->
+			<p class="has-muted-color has-text-color">Have a project in mind, or just want to say hello?</p>
+			<!-- /wp:paragraph -->
+
+			<!-- wp:paragraph {"className":"site-footer__email"} -->
+			<p class="site-footer__email"><a href="mailto:hello@dsgourakis.com">hello@dsgourakis.com</a></p>
+			<!-- /wp:paragraph -->
+		</div>
+		<!-- /wp:group -->
+
+		<!-- wp:dsg/contact-form {"className":"site-footer__form"} /-->
+	</section>
+	<!-- /wp:group -->
+
+	<!-- wp:group {"align":"wide","className":"site-footer__bar","layout":{"type":"flex","flexWrap":"wrap","justifyContent":"space-between"}} -->
+	<div class="wp-block-group alignwide site-footer__bar">
+		<!-- wp:group {"style":{"spacing":{"blockGap":"0.5em"}},"layout":{"type":"flex","flexWrap":"wrap"}} -->
+		<div class="wp-block-group">
+			<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"dsg-core/copyright","args":{"name":"Dimitris Sgourakis"}}}}} -->
+			<p>© 2026 Dimitris Sgourakis</p>
+			<!-- /wp:paragraph -->
+
+			<!-- wp:paragraph -->
+			<p>· <a href="https://www.linkedin.com/in/dimitris-sgourakis/" target="_blank" rel="noreferrer noopener">LinkedIn</a> · <a href="/privacy-policy/">Privacy</a></p>
+			<!-- /wp:paragraph -->
+		</div>
+		<!-- /wp:group -->
+
+		<!-- wp:paragraph {"className":"site-footer__top"} -->
+		<p class="site-footer__top"><a href="#top">Back to top <span aria-hidden="true">↑</span></a></p>
 		<!-- /wp:paragraph -->
 	</div>
 	<!-- /wp:group -->

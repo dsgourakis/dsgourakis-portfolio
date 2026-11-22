@@ -1,6 +1,6 @@
 # dsgourakis.com
 
-[![CI](https://github.com/dsgourakis/dsgourakis/actions/workflows/ci.yml/badge.svg)](https://github.com/dsgourakis/dsgourakis/actions/workflows/ci.yml)
+[![CI](https://github.com/dsgourakis/dsgourakis-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/dsgourakis/dsgourakis-portfolio/actions/workflows/ci.yml)
 
 This is the source code for my portfolio site, [dsgourakis.com](https://dsgourakis.com).
 
@@ -31,6 +31,13 @@ The plugin needs Composer's autoloader. If you have PHP and Composer installed, 
 npx wp-env run cli --env-cwd=wp-content/dsg-repo composer install
 ```
 
+### Working on the blocks
+
+Use two terminals:
+
+1. `npm run env:start`, which finishes and hands the terminal back while the site keeps running.
+2. `npm run start`, which you leave open while you edit blocks. Stop it with Ctrl+C.
+
 ### Useful commands
 
 | Command | What it does |
@@ -51,9 +58,9 @@ Code moves up through Git. Content (the database and uploads) only ever moves do
 
 - [x] Tooling, CI and the deploy pipeline
 - [x] Theme foundations, `project` post type, `project-card` block
-- [ ] `tech-stack`, `project-grid` and `metrics` blocks
-- [ ] Contact form backed by a REST endpoint
-- [ ] Light/dark toggle that respects the system setting
+- [x] `tech-stack`, `project-grid` and `metrics` blocks
+- [x] Contact form backed by a REST endpoint
+- [x] Light/dark toggle that respects the system setting (dark as fallback, choice remembered)
 - [ ] Accessibility statement and automated a11y checks in CI
 - [ ] Lighthouse 95+ across the board
 

@@ -3,35 +3,35 @@
  * Title: Hero
  * Slug: dsg-theme/hero
  * Categories: banner
- * Description: Introduction with name, role and call to action.
+ * Description: Homepage intro: big heading, tagline, buttons and the monogram.
+ *
+ * Uses the Hero block from the dsg-core plugin.
  *
  * @package DSG\Theme
  */
 
+// Block attributes are stored as JSON in the block comment;
+// serialize_block_attributes() escapes the HTML inside them the way the editor does.
+$dsg_theme_hero_attributes = serialize_block_attributes(
+	array(
+		'heading' => sprintf(
+			/* translators: %s: the name, with its first letter highlighted. */
+			__( 'Hi,<br>I&#8217;m %s,<br>web developer.', 'dsg-theme' ),
+			'<mark class="has-inline-color has-accent-color">D</mark>imitris'
+		),
+		'tagline' => __( 'WordPress developer / Full-stack / Responsive builds', 'dsg-theme' ),
+	)
+);
 ?>
-<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"var:preset|spacing|60","bottom":"var:preset|spacing|60"},"blockGap":"var:preset|spacing|40"}},"layout":{"type":"constrained","justifyContent":"left","contentSize":"760px"}} -->
-<div class="wp-block-group alignwide" style="padding-top:var(--wp--preset--spacing--60);padding-bottom:var(--wp--preset--spacing--60)">
-	<!-- wp:paragraph {"textColor":"accent","style":{"typography":{"fontWeight":"600","textTransform":"uppercase","letterSpacing":"0.08em"}},"fontSize":"small"} -->
-	<p class="has-accent-color has-text-color has-small-font-size" style="font-weight:600;letter-spacing:0.08em;text-transform:uppercase"><?php esc_html_e( 'Senior WordPress Developer', 'dsg-theme' ); ?></p>
-	<!-- /wp:paragraph -->
-
-	<!-- wp:heading {"level":1} -->
-	<h1 class="wp-block-heading"><?php esc_html_e( 'Accessible, fast WordPress and WooCommerce sites.', 'dsg-theme' ); ?></h1>
-	<!-- /wp:heading -->
-
-	<!-- wp:paragraph {"textColor":"muted","fontSize":"large"} -->
-	<p class="has-muted-color has-text-color has-large-font-size"><?php esc_html_e( 'I build custom block themes and plugins with a focus on WCAG compliance, performance and clean, tested code.', 'dsg-theme' ); ?></p>
-	<!-- /wp:paragraph -->
-
-	<!-- wp:buttons -->
-	<div class="wp-block-buttons">
-		<!-- wp:button -->
-		<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="/portfolio/"><?php esc_html_e( 'View projects', 'dsg-theme' ); ?></a></div>
-		<!-- /wp:button -->
-		<!-- wp:button {"className":"is-style-outline"} -->
-		<div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="/contact/"><?php esc_html_e( 'Get in touch', 'dsg-theme' ); ?></a></div>
-		<!-- /wp:button -->
-	</div>
-	<!-- /wp:buttons -->
+<!-- wp:dsg/hero <?php echo $dsg_theme_hero_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON escaped by serialize_block_attributes(). ?> -->
+<!-- wp:buttons -->
+<div class="wp-block-buttons">
+	<!-- wp:button {"className":"is-style-outline"} -->
+	<div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="/contact/"><?php esc_html_e( 'Contact me', 'dsg-theme' ); ?></a></div>
+	<!-- /wp:button -->
+	<!-- wp:button {"className":"is-style-text"} -->
+	<div class="wp-block-button is-style-text"><a class="wp-block-button__link wp-element-button" href="/portfolio/"><?php esc_html_e( 'See work ↓', 'dsg-theme' ); ?></a></div>
+	<!-- /wp:button -->
 </div>
-<!-- /wp:group -->
+<!-- /wp:buttons -->
+<!-- /wp:dsg/hero -->

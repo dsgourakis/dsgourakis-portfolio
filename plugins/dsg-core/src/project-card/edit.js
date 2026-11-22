@@ -4,7 +4,7 @@
  * React concepts used here:
  * - props: WordPress passes `attributes` (the saved data) and `setAttributes` (to change it).
  * - state: `technologiesText` keeps what the user is typing until they leave the field.
- * - components: RichText, MediaUpload, InspectorControls are React components from WordPress.
+ * - components: RichText, InspectorControls and our own ImagePicker are React components.
  */
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
@@ -12,15 +12,19 @@ import {
 	useBlockProps,
 	RichText,
 	InspectorControls,
-	MediaUpload,
-	MediaUploadCheck,
 } from '@wordpress/block-editor';
-import { PanelBody, TextControl, Button, Flex } from '@wordpress/components';
+import {
+	PanelBody,
+	TextControl,
+	ToggleControl,
+	Flex,
+} from '@wordpress/components';
 
+import ImagePicker from '../shared/image-picker';
 import { parseTechnologies, formatTechnologies } from './utils';
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { title, summary, url, imageId, imageUrl, imageAlt, technologies } =
+	const { title, summary, url, imageAlt, technologies, featured } =
 		attributes;
 
 	// Local state: the raw text in the "Technologies" field while typing.
@@ -29,20 +33,10 @@ export default function Edit( { attributes, setAttributes } ) {
 	);
 
 	const blockProps = useBlockProps( {
-		className: 'wp-block-dsg-project-card',
+		className: featured
+			? 'wp-block-dsg-project-card is-featured'
+			: 'wp-block-dsg-project-card',
 	} );
-
-	const onSelectImage = ( media ) => {
-		setAttributes( {
-			imageId: media.id,
-			imageUrl: media.sizes?.large?.url ?? media.url,
-			imageAlt: media.alt ?? '',
-		} );
-	};
-
-	const onRemoveImage = () => {
-		setAttributes( { imageId: undefined, imageUrl: '', imageAlt: '' } );
-	};
 
 	return (
 		<>
@@ -50,6 +44,18 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorControls>
 				<PanelBody title={ __( 'Project settings', 'dsg-core' ) }>
 					<Flex direction="column" gap={ 4 }>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={ __( 'Featured', 'dsg-core' ) }
+							help={ __(
+								'Large, full-row layout when this is the first card in its group.',
+								'dsg-core'
+							) }
+							checked={ featured }
+							onChange={ ( value ) =>
+								setAttributes( { featured: value } )
+							}
+						/>
 						<TextControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
@@ -99,53 +105,11 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<article { ...blockProps }>
-				<MediaUploadCheck>
-					<MediaUpload
-						onSelect={ onSelectImage }
-						allowedTypes={ [ 'image' ] }
-						value={ imageId }
-						render={ ( { open } ) => (
-							<div className="wp-block-dsg-project-card__media">
-								{ imageUrl ? (
-									<>
-										<img
-											src={ imageUrl }
-											alt={ imageAlt }
-										/>
-										<div className="wp-block-dsg-project-card__media-actions">
-											<Button
-												variant="secondary"
-												onClick={ open }
-											>
-												{ __(
-													'Replace image',
-													'dsg-core'
-												) }
-											</Button>
-											<Button
-												variant="tertiary"
-												isDestructive
-												onClick={ onRemoveImage }
-											>
-												{ __( 'Remove', 'dsg-core' ) }
-											</Button>
-										</div>
-									</>
-								) : (
-									<Button
-										variant="secondary"
-										onClick={ open }
-									>
-										{ __(
-											'Add project image',
-											'dsg-core'
-										) }
-									</Button>
-								) }
-							</div>
-						) }
-					/>
-				</MediaUploadCheck>
+				<ImagePicker
+					className="wp-block-dsg-project-card__media"
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+				/>
 
 				<div className="wp-block-dsg-project-card__body">
 					<h3 className="wp-block-dsg-project-card__title">
@@ -180,6 +144,15 @@ export default function Edit( { attributes, setAttributes } ) {
 								<li key={ name }>{ name }</li>
 							) ) }
 						</ul>
+					) }
+
+					{ url && (
+						<span
+							className="wp-block-dsg-project-card__cta"
+							aria-hidden="true"
+						>
+							{ __( 'View the project', 'dsg-core' ) } →
+						</span>
 					) }
 				</div>
 			</article>

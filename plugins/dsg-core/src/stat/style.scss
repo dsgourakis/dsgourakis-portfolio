@@ -1,0 +1,75 @@
+/**
+ * Editor + frontend styles. Values come from theme.json custom properties,
+ * with fallbacks in case the block is used with another theme.
+ *
+ * Stats always sit inside a Stats block (block.json "parent"), which
+ * owns the grid and resets the counter. This file only styles one card:
+ * - The FIRST Stat is the highlight: big title, no pre-title.
+ * - Every other Stat gets a counter before its pre-title: "01 / build".
+ */
+
+.wp-block-dsg-stat {
+	display: flex;
+	flex-direction: column;
+	flex: 1 0;
+	gap: 0.75rem;
+	padding: 1.75rem;
+	border: 1px solid var(--wp--preset--color--border, currentcolor);
+	border-radius: var(--wp--custom--radius--card, 20px);
+	background-color: var(--wp--preset--color--surface, transparent);
+	counter-increment: dsg-stat;
+
+	&__pretitle {
+		margin: 0;
+		font-family: var(--wp--preset--font-family--mono, monospace);
+		font-size: var(--wp--preset--font-size--x-small, 0.8125rem);
+		color: var(--wp--preset--color--accent, currentcolor);
+
+		// The counter. `/ ""` is its alt text: empty, so screen readers skip it.
+		&::before {
+			content: counter(dsg-stat, decimal-leading-zero) " / " / "";
+		}
+
+		// No pre-title typed: show just the number.
+		&:empty::before {
+			content: counter(dsg-stat, decimal-leading-zero) / "";
+		}
+	}
+
+	&__title {
+		margin: 0;
+		font-size: var(--wp--preset--font-size--large, 1.375rem);
+		font-weight: 700;
+		line-height: 1.2;
+		letter-spacing: normal;
+	}
+
+	&__description {
+		margin: 0;
+		font-size: var(--wp--preset--font-size--small, 0.9375rem);
+		line-height: 1.4;
+		color: var(--wp--preset--color--muted, inherit);
+	}
+
+	// The highlight: first Stat in its container.
+	&:first-child {
+		gap: 0.5rem;
+		counter-increment: none;
+
+		.wp-block-dsg-stat__pretitle {
+			display: none;
+		}
+
+		.wp-block-dsg-stat__title {
+			font-size: var(--wp--preset--font-size--stat, 4rem);
+			font-weight: 900;
+			line-height: 1;
+			letter-spacing: -0.04em;
+			color: var(--wp--preset--color--accent, currentcolor);
+		}
+
+		.wp-block-dsg-stat__description {
+			font-size: 1rem;
+		}
+	}
+}

@@ -1,0 +1,175 @@
+/**
+ * Editor + frontend styles. Values come from theme.json custom properties,
+ * with fallbacks in case the block is used with another theme.
+ *
+ * Text on the left, the monogram on the right. They sit side by side while
+ * both fit, and the monogram wraps under the text on narrow screens.
+ * The h1's size, weight and tracking come from theme.json's h1 styles.
+ */
+
+// The small grey <body> / <h1> / </h1> labels.
+@mixin code-tag {
+	font-family: var(--wp--preset--font-family--mono, monospace);
+	font-size: var(--wp--preset--font-size--x-small, 0.8125rem);
+	font-weight: 400;
+	line-height: 1.4;
+	letter-spacing: 0;
+	color: var(--wp--preset--color--muted, currentcolor);
+	opacity: 0.6;
+}
+
+$ease: var(--wp--custom--easing, cubic-bezier(0.2, 0.7, 0.2, 1));
+
+// Fade up into place. No "to": it ends at the element's normal style.
+@keyframes dsg-hero-rise {
+
+	from {
+		opacity: 0;
+		transform: translateY(1.5rem);
+	}
+}
+
+// The monogram swings from a slight tilt to its final angle.
+@keyframes dsg-hero-tilt {
+
+	from {
+		opacity: 0;
+		rotate: -14deg;
+		transform: translateY(2.5rem);
+	}
+}
+
+.wp-block-dsg-hero {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--wp--preset--spacing--40, 1.5rem);
+	min-height: min(45rem, 100svh);
+	padding-top: var(--wp--preset--spacing--40, 1.5rem);
+	padding-bottom: var(--wp--preset--spacing--80, 5rem);
+
+	// Grows much faster than the monogram, so it keeps most of the width.
+	&__content {
+		display: flex;
+		flex: 999 1 32.5rem;
+		flex-direction: column;
+		gap: 1.75rem;
+		min-width: 0;
+	}
+
+	&__heading {
+		animation: dsg-hero-rise 0.8s $ease both;
+	}
+
+	// Inline, so the </h1> label can sit right after the last word.
+	&__title {
+		display: inline;
+		margin: 0;
+
+		// The text color format saves a <mark>; drop the browser's yellow.
+		mark {
+			background: none;
+			color: inherit;
+		}
+	}
+
+	&__tagline {
+		margin: 0;
+		font-family: var(--wp--preset--font-family--mono, monospace);
+		font-size: var(--wp--preset--font-size--x-small, 0.8125rem);
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--wp--preset--color--muted, inherit);
+		animation: dsg-hero-rise 0.8s 0.15s $ease both;
+	}
+
+	&__actions {
+		animation: dsg-hero-rise 0.8s 0.3s $ease both;
+
+		.wp-block-buttons {
+			align-items: center;
+			gap: var(--wp--preset--spacing--20, 0.75rem);
+		}
+	}
+
+	// `/ ""` is the alt text: empty, so screen readers skip the labels.
+	&.has-code-tags {
+
+		.wp-block-dsg-hero__content::before {
+			content: "<body>" / "";
+
+			@include code-tag;
+		}
+
+		.wp-block-dsg-hero__heading::before {
+			content: "<h1>" / "";
+			display: block;
+			margin-bottom: 0.375rem;
+
+			@include code-tag;
+		}
+
+		.wp-block-dsg-hero__heading::after {
+			content: "</h1>" / "";
+			margin-left: 0.75rem;
+			white-space: nowrap;
+
+			@include code-tag;
+		}
+	}
+
+	// Decoration only: the letter is drawn twice, amber behind cobalt.
+	// Sizes are in em, so changing the font-size scales the whole thing.
+	&__monogram {
+		position: relative;
+		flex: 1 1 23.75rem;
+		height: 1.6em;
+		overflow: hidden;
+		font-size: clamp(10rem, 28vw, 25rem);
+		font-weight: 900;
+		line-height: 1;
+		pointer-events: none;
+		user-select: none;
+	}
+
+	&__letter {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		translate: -46% -50%;
+		rotate: -24deg;
+		color: var(--wp--preset--color--accent, currentcolor);
+		animation: dsg-hero-tilt 1s 0.25s $ease both;
+
+		&.is-back {
+			margin: 0.07em 0 0 -0.11em;
+			translate: -40% -50%;
+			color: var(--wp--preset--color--accent-2, currentcolor);
+			animation-delay: 0.1s;
+		}
+	}
+
+	// Below 782px (same breakpoint as the phone menu): no tall min-height,
+	// and the monogram becomes a smaller, fixed-size block, centred under the
+	// text instead of stretching across the row.
+	@media (max-width: 781px) {
+		justify-content: center;
+		min-height: 0;
+
+		&__monogram {
+			flex: 0 0 14rem;
+			height: 1.1em;
+		}
+	}
+
+	// Skip the entrance animations; everything shows in its final place.
+	@media (prefers-reduced-motion: reduce) {
+
+		&__heading,
+		&__tagline,
+		&__actions,
+		&__letter {
+			animation: none;
+		}
+	}
+}

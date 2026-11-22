@@ -1,0 +1,27 @@
+/**
+ * Editor + frontend styles.
+ *
+ * The card inside is a normal Project Card in its featured layout
+ * (see project-card/style.scss). Only its counter line changes:
+ * "// next project" instead of "01 — featured".
+ */
+
+.wp-block-dsg-next-project {
+
+	// Matches the featured card's own rule (.card.is-featured:first-child
+	// .title::before) plus this wrapper, so it wins.
+	.wp-block-dsg-project-card.is-featured:first-child .wp-block-dsg-project-card__title::before {
+		content: "// next project" / "";
+	}
+
+	// Editor only: placeholder shown in the Site Editor template.
+	&__placeholder {
+		margin: 0;
+		padding: var(--wp--preset--spacing--60, 2rem);
+		border: 1px dashed var(--wp--preset--color--border, currentcolor);
+		border-radius: var(--wp--custom--radius--card, 20px);
+		font-family: var(--wp--preset--font-family--mono, monospace);
+		font-size: var(--wp--preset--font-size--x-small, 0.8125rem);
+		color: var(--wp--preset--color--muted, inherit);
+	}
+}

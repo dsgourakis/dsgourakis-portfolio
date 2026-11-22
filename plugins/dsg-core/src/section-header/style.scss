@@ -1,0 +1,46 @@
+/**
+ * Editor + frontend styles. Values come from theme.json custom properties,
+ * with fallbacks in case the block is used with another theme.
+ *
+ * Heading on the left, aside on the right, both sitting on the same
+ * bottom line. On narrow screens the aside wraps under the heading.
+ * - Meta label (default): small mono text, pushed to the far right.
+ * - Intro paragraph: muted body text taking the right half.
+ */
+
+.wp-block-dsg-section-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: var(--wp--preset--spacing--30, 1rem) var(--wp--preset--spacing--50, 2rem);
+
+	&__heading {
+		margin: 0;
+
+		// Font size, weight and tracking come from theme.json's h2 styles.
+	}
+
+	&__aside {
+		margin: 0;
+		font-family: var(--wp--preset--font-family--mono, monospace);
+		font-size: var(--wp--preset--font-size--x-small, 0.8125rem);
+		color: var(--wp--preset--color--muted, inherit);
+	}
+
+	// Intro paragraph: two equal halves on wide screens, stacked on phones.
+	&.is-style-intro {
+
+		.wp-block-dsg-section-header__heading {
+			flex: 1 1 22rem;
+		}
+
+		.wp-block-dsg-section-header__aside {
+			flex: 1 1 22rem;
+			max-width: 34rem;
+			font-family: inherit;
+			font-size: var(--wp--preset--font-size--medium, 1.0625rem);
+			line-height: 1.6;
+		}
+	}
+}

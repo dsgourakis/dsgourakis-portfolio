@@ -4,7 +4,7 @@ Theme URI: https://www.dsgourakis.com
 Author: Dimitris Sgourakis
 Author URI: https://www.dsgourakis.com
 Description: Block theme for dsgourakis.com. Design settings live in theme.json.
-Version: 0.1.0
+Version: 1.0.0
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 8.2
@@ -18,10 +18,225 @@ Text Domain: dsg-theme
  * theme.json cannot express yet.
  */
 
+/*
+ * No automatic gap between the header, <main> and the footer.
+ */
+.wp-site-blocks > * {
+	margin-block-start: 0;
+}
+
+:root :is(.is-layout-flow, .is-layout-constrained) > * {
+	margin-block-start: 0;
+}
+
 /* Visible focus outline for keyboard users on every interactive element. */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
 	outline: 3px solid var(--wp--preset--color--accent);
 	outline-offset: 3px;
+}
+
+/*
+ * Button styles. Here rather than theme.json because they need hover
+ * states, and core's own outline CSS would otherwise win on hover.
+ */
+
+/* Outline: accent border and text; fills with the accent on hover. */
+.wp-block-button.is-style-outline > .wp-block-button__link {
+	background-color: transparent;
+	border-color: var(--wp--preset--color--accent);
+	color: var(--wp--preset--color--accent);
+}
+
+/* Text link: same type as a button, without the box. */
+.wp-block-button.is-style-text > .wp-block-button__link {
+	padding-left: 0.625rem;
+	padding-right: 0.625rem;
+	background-color: transparent;
+	border-color: transparent;
+	color: var(--wp--preset--color--muted);
+}
+
+.wp-block-button.is-style-outline > .wp-block-button__link:hover {
+	background-color: var(--wp--preset--color--accent);
+	border-color: var(--wp--preset--color--accent);
+	color: var(--wp--preset--color--on-accent);
+}
+
+.wp-block-button.is-style-text > .wp-block-button__link:hover {
+	background-color: transparent;
+	border-color: transparent;
+	color: var(--wp--preset--color--contrast);
+}
+
+/*
+ * In-page links (like "See work ↓") glide to their section instead of jumping.
+ * Only for people who haven't asked their system for less motion.
+ */
+@media (prefers-reduced-motion: no-preference) {
+
+	html {
+		scroll-behavior: smooth;
+	}
+}
+
+/* Leave a little space above a section when a link scrolls to it. */
+[id] {
+	scroll-margin-top: var(--wp--preset--spacing--50);
+}
+
+/*
+ * Header: "D.S" logo and the pill menu (parts/header.html). The row on the
+ * right (menu, Resume button, toggle) is the dsg/header-actions block in
+ * dsg-core; its layout and the Resume button's look are in that block's
+ * style.scss.
+ */
+
+.site-logo {
+	font-size: var(--wp--preset--font-size--large);
+	font-weight: 900;
+	letter-spacing: var(--wp--custom--letter-spacing--tighter);
+	text-decoration: none;
+}
+
+.site-logo__dot {
+	color: var(--wp--preset--color--accent);
+}
+
+/*
+ * Pill menu. On screens 782px and up (below that, dsg/header-actions shows
+ * the phone menu instead), the links sit in a rounded bar and a highlight
+ * slides under the current one.
+ *
+ * The highlight (.dsg-nav-pill) is printed and positioned by the dsg-core
+ * plugin (assets/client-navigation/), which passes its place and size as
+ * --pill-x/y/w/h. Without JavaScript, the current link gets its own
+ * background instead.
+ *
+ * The Navigation block has no overlay of its own ("overlayMenu": "never"),
+ * so the bar is the <nav> itself. "nav." because the block copies the
+ * class onto the inner <ul> too.
+ */
+@media (min-width: 782px) {
+
+	nav.dsg-pill-nav {
+		position: relative;
+		padding: 0.25rem;
+		background-color: var(--wp--preset--color--surface);
+		border: 1px solid var(--wp--preset--color--border);
+		border-radius: var(--wp--custom--radius--pill);
+	}
+
+	.dsg-pill-nav .wp-block-navigation__container {
+		gap: 0;
+	}
+
+	/* position: relative paints the link text above the highlight. */
+	.dsg-pill-nav .wp-block-navigation-item__content {
+		position: relative;
+		min-width: 5.25rem;
+		padding: 0.5rem 0;
+		border-radius: var(--wp--custom--radius--pill);
+		text-align: center;
+	}
+
+	/* No JavaScript: the current link carries the highlight itself. */
+	.dsg-pill-nav .current-menu-item > .wp-block-navigation-item__content {
+		background-color: var(--wp--preset--color--border);
+	}
+
+	.dsg-nav-pill.is-visible ~ ul .current-menu-item > a {
+		background-color: transparent;
+	}
+
+	.dsg-nav-pill {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: var(--pill-w, 0);
+		height: var(--pill-h, 0);
+		border-radius: var(--wp--custom--radius--pill);
+		background-color: var(--wp--preset--color--border);
+		opacity: 0;
+		transform: translate(var(--pill-x, 0), var(--pill-y, 0));
+	}
+
+	.dsg-nav-pill.is-visible {
+		opacity: 1;
+	}
+
+	.dsg-nav-pill.is-animated {
+		transition:
+			transform 0.38s var(--wp--custom--easing),
+			width 0.38s var(--wp--custom--easing);
+	}
+}
+
+/*
+ * Light/dark toggle. The button is printed by dsg-core's dsg/header-actions
+ * block; its script is assets/js/color-scheme.js.
+ * Dark is the default; the light palette is swapped in by functions.php
+ * when <html> has data-theme="light".
+ */
+
+/* Scrollbars and form controls follow the scheme too. */
+:root {
+	color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+	color-scheme: light;
+}
+
+.color-scheme-toggle {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	padding: 0;
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--wp--custom--radius--pill);
+	background-color: var(--wp--preset--color--surface);
+	color: var(--wp--preset--color--contrast);
+	cursor: pointer;
+}
+
+.color-scheme-toggle:hover {
+	border-color: var(--wp--preset--color--accent);
+	color: var(--wp--preset--color--accent);
+}
+
+/* Shown by the script; without JavaScript it would do nothing. */
+.color-scheme-toggle[hidden] {
+	display: none;
+}
+
+/* The icon shows the scheme a click switches to. */
+.color-scheme-toggle__moon,
+:root[data-theme="light"] .color-scheme-toggle__sun {
+	display: none;
+}
+
+:root[data-theme="light"] .color-scheme-toggle__moon {
+	display: block;
+}
+
+/*
+ * New page content fades up after a client-side page change.
+ * After a Portfolio filter change, only the cards do.
+ */
+main.is-entering,
+.wp-block-dsg-project-grid__items.is-entering {
+	animation: dsg-page-enter 0.4s var(--wp--custom--easing) both;
+}
+
+@keyframes dsg-page-enter {
+
+	from {
+		opacity: 0;
+		transform: translateY(0.5rem);
+	}
 }
 
 /* Respect users who ask for less motion. */
@@ -33,5 +248,424 @@ Text Domain: dsg-theme
 		animation-duration: 0.01ms !important;
 		transition-duration: 0.01ms !important;
 		scroll-behavior: auto !important;
+	}
+}
+
+/*
+ * Footer: the contact card and the copyright bar (parts/footer.html).
+ * The form itself is the dsg/contact-form block, styled by the plugin.
+ *
+ * The card's classes are shared with the Contact page's card
+ * (.contact-card, patterns/contact-page.php), so both look the same.
+ */
+
+.site-footer {
+	padding-top: var(--wp--preset--spacing--70);
+	padding-bottom: var(--wp--preset--spacing--50);
+}
+
+/* The card: intro on the left, the form on the right; stacks when narrow. */
+.site-footer__contact,
+.contact-card {
+	gap: clamp(2rem, 5vw, 3rem);
+	padding: clamp(1.75rem, 5vw, 4rem);
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--wp--custom--radius--panel);
+	background: var(--wp--preset--color--surface);
+}
+
+.site-footer__intro,
+.contact-card__intro {
+	flex: 1 1 21.25rem;
+	gap: 1.125rem;
+}
+
+/*
+ * Resets the headings' and paragraphs' own margins. It doesn't fight the
+ * ":root :is(.is-layout-flow…) > *" rule near the top: both set
+ * margin-block-start to 0, so the order/specificity warning is harmless.
+ */
+/* stylelint-disable-next-line no-descending-specificity */
+.site-footer__intro > * {
+	margin: 0;
+}
+
+.site-footer__intro h2 {
+	font-weight: 800;
+	letter-spacing: var(--wp--custom--letter-spacing--tightest);
+	line-height: 1;
+}
+
+/* The text color format saves a <mark>; drop the browser's yellow. */
+.site-footer__intro mark {
+	background: none;
+}
+
+.site-footer__label,
+.site-footer__bar {
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	color: var(--wp--preset--color--muted);
+}
+
+.site-footer__email {
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: var(--wp--preset--font-size--small);
+}
+
+.site-footer__form,
+.contact-card__form {
+	flex: 1 1 26.25rem;
+	min-width: 0;
+}
+
+.site-footer__bar {
+	padding-top: var(--wp--preset--spacing--40);
+}
+
+.site-footer__bar p {
+	margin: 0;
+}
+
+/*
+ * Pushed to the far right; the rest of the bar stays together on the left.
+ * "#top" scrolls to the top of the page without needing an element with that
+ * id (HTML spec), and hash links are left alone by the client-side router.
+ */
+.site-footer__top {
+	margin-left: auto;
+}
+
+/*
+ * Decoration, like the hero's code tags.
+ * `/ ""` hides it from screen readers.
+ */
+.site-footer__bar::before {
+	content: "</body>" / "";
+	opacity: 0.6;
+}
+
+/*
+ * Page header on secondary pages (parts/page-header.html):
+ * mono "// label", big title, muted lead. Same look as the homepage sections.
+ */
+
+/*
+ * The global "no margins" rule at the top also removes the header's block
+ * gap, so space the lines here. :root matches that rule's specificity,
+ * and coming later wins.
+ */
+:root .site-page-header > * {
+	margin-block-end: 0;
+}
+
+:root .site-page-header > * + * {
+	margin-block-start: var(--wp--preset--spacing--30);
+}
+
+:root .site-page-header > .site-page-header__label + * {
+	margin-block-start: var(--wp--preset--spacing--20);
+}
+
+.site-page-header__label {
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	letter-spacing: var(--wp--custom--letter-spacing--label);
+	color: var(--wp--preset--color--accent);
+}
+
+/* Nothing bound (no slug): drop the empty line. */
+.site-page-header__label:empty {
+	display: none;
+}
+
+.site-page-header .wp-block-post-title {
+	letter-spacing: var(--wp--custom--letter-spacing--tightest);
+	line-height: 1;
+}
+
+/*
+ * Contact page: its own card holds the form, so the footer's card is hidden.
+ * data-page comes from dsg-core (ClientNavigation) and updates on every
+ * client-side page change, since <main> is swapped.
+ */
+main[data-page="contact"] ~ * .site-footer__contact {
+	display: none;
+}
+
+/*
+ * Single project (templates/single-dsg_project.html): back link, title,
+ * details strip, cover image, then the write-up beside a sticky
+ * "Built with" card, and the next project at the end.
+ */
+
+.project-back a {
+	text-decoration: none;
+}
+
+.project-back a:hover {
+	text-decoration: underline;
+}
+
+.project-cover img {
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--wp--custom--radius--panel);
+}
+
+/*
+ * Long-form text: the theme removes block margins everywhere (top of
+ * this file), so the write-up gets its own rhythm back. Headings get
+ * more room above than below, so they group with what follows.
+ *
+ * (The order warning below compares these with the page header rules;
+ * they match different elements, so it doesn't apply.)
+ */
+/* stylelint-disable-next-line no-descending-specificity */
+.project-layout .project-content > * + * {
+	margin-block-start: var(--wp--preset--spacing--40);
+}
+
+.project-layout .project-content > :is(h2, h3, .wp-block-dsg-section-header) {
+	margin-block-start: var(--wp--preset--spacing--80);
+}
+
+.project-layout .project-content > :first-child {
+	margin-block-start: 0;
+}
+
+/* Heading + section header: the text right after sits close. */
+.project-layout .project-content > :is(h2, h3, .wp-block-dsg-section-header) + * {
+	margin-block-start: var(--wp--preset--spacing--30);
+}
+
+.project-layout .project-content > p {
+	max-width: 68ch;
+}
+
+/* The "Built with" card follows the reader down the page on wide screens. */
+@media (min-width: 782px) {
+
+	.project-aside > * {
+		position: sticky;
+		top: var(--wp--preset--spacing--50);
+	}
+}
+
+/*
+ * Contact page (templates/page-contact.html, patterns/contact-page.php).
+ * The card itself shares the footer card's styles (.contact-card).
+ */
+
+/* stylelint-disable-next-line no-descending-specificity */
+.contact-card__intro > * {
+	margin: 0;
+}
+
+/* The text color format saves a <mark>; drop the browser's yellow. */
+.site-page-header mark {
+	background: none;
+}
+
+/* "Available for new projects", with a green dot. */
+.contact-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.625rem;
+	padding: 0.375rem 0.875rem;
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--wp--custom--radius--pill);
+	background-color: var(--wp--preset--color--base);
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: var(--wp--preset--font-size--x-small);
+}
+
+.contact-status::before {
+	content: "";
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 50%;
+	background-color: #3ecf8e;
+	box-shadow: 0 0 0 4px rgba(62, 207, 142, 0.2);
+}
+
+/* "// email" mono label on its own line, the detail below it. */
+.contact-detail__label {
+	display: block;
+	margin-bottom: 0.25rem;
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	color: var(--wp--preset--color--muted);
+}
+
+/* The first detail sits a little further from the text above it. */
+.contact-card__intro > .contact-detail:first-of-type {
+	margin-block-start: var(--wp--preset--spacing--20);
+}
+
+/* FAQ: each question is a surface card that opens in place. */
+.contact-faq .wp-block-details {
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--wp--custom--radius--card);
+	background-color: var(--wp--preset--color--surface);
+}
+
+.contact-faq .wp-block-details + .wp-block-details {
+	margin-block-start: var(--wp--preset--spacing--20);
+}
+
+.contact-faq summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1.25rem 1.5rem;
+	font-weight: 700;
+	cursor: pointer;
+	list-style: none;
+}
+
+.contact-faq summary::-webkit-details-marker {
+	display: none;
+}
+
+/* "+" that turns into "−" when open. Decoration only. */
+.contact-faq summary::after {
+	content: "+" / "";
+	font-family: var(--wp--preset--font-family--mono);
+	font-weight: 400;
+	color: var(--wp--preset--color--accent);
+}
+
+.contact-faq details[open] summary::after {
+	content: "−" / "";
+}
+
+.contact-faq details > :not(summary) {
+	margin: 0;
+	padding: 0 1.5rem 1.25rem;
+	color: var(--wp--preset--color--muted);
+}
+
+/*
+ * About page (templates/page-about.html, patterns/about-page.php).
+ * Quick facts reuse the Contact page's .contact-detail rows.
+ */
+
+/* Bio on the left, quick-facts card on the right; stacks when narrow. */
+.about-intro {
+	gap: clamp(2rem, 5vw, 4rem);
+}
+
+.about-intro__text {
+	flex: 1 1 32rem;
+	gap: var(--wp--preset--spacing--30);
+	max-width: 46rem;
+}
+
+.about-facts {
+	flex: 1 1 18rem;
+	gap: var(--wp--preset--spacing--30);
+	padding: var(--wp--preset--spacing--60);
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--wp--custom--radius--panel);
+	background-color: var(--wp--preset--color--surface);
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+:is(.about-intro__text, .about-facts) > * {
+	margin: 0;
+}
+
+/* Section title, then its content. Matches different elements from the
+   page header rule the order warning compares it with. */
+/* stylelint-disable-next-line no-descending-specificity */
+.about-section > .wp-block-dsg-section-header + * {
+	margin-block-start: var(--wp--preset--spacing--40);
+}
+
+.about-stack {
+	gap: var(--wp--preset--spacing--30);
+}
+
+/*
+ * Wide screens: five cards as a row of three and a row of two, both full
+ * width, instead of four plus one on its own. Six columns: the first
+ * three cards take two each, the last two take three each.
+ */
+@media (min-width: 1100px) {
+
+	.about-stack:has(> :nth-child(5):last-child) {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+	}
+
+	.about-stack:has(> :nth-child(5):last-child) > * {
+		grid-column: span 2;
+	}
+
+	.about-stack:has(> :nth-child(5):last-child) > :nth-child(n + 4) {
+		grid-column: span 3;
+	}
+}
+
+/*
+ * Experience: one row per job, years on the left in mono, the role and
+ * details on the right, with a line between rows. Stacks on phones.
+ */
+.about-timeline__item {
+	display: grid;
+	grid-template-columns: 11rem minmax(0, 1fr);
+	column-gap: var(--wp--preset--spacing--50);
+	row-gap: 0.25rem;
+	padding-block: var(--wp--preset--spacing--40);
+	border-top: 1px solid var(--wp--preset--color--border);
+}
+
+.about-timeline__item:last-child {
+	border-bottom: 1px solid var(--wp--preset--color--border);
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.about-timeline__item > * {
+	grid-column: 2;
+	margin: 0;
+}
+
+.about-timeline__item > .about-timeline__years {
+	grid-column: 1;
+	grid-row: 1 / span 3;
+	padding-top: 0.3em;
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	color: var(--wp--preset--color--accent);
+}
+
+.about-timeline__role {
+	font-size: var(--wp--preset--font-size--large);
+	font-weight: 700;
+	letter-spacing: normal;
+}
+
+.about-timeline__where {
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	color: var(--wp--preset--color--muted);
+}
+
+.about-timeline__summary {
+	max-width: 46rem;
+	margin-top: 0.5rem;
+	color: var(--wp--preset--color--muted);
+}
+
+@media (max-width: 599px) {
+
+	.about-timeline__item {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.about-timeline__item > *,
+	.about-timeline__item > .about-timeline__years {
+		grid-column: 1;
+		grid-row: auto;
 	}
 }

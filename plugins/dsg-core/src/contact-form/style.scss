@@ -1,0 +1,118 @@
+/**
+ * Editor + frontend styles. Values come from theme.json custom properties,
+ * with fallbacks in case the block is used with another theme.
+ *
+ * Underlined fields with small mono labels, as in the design. The submit
+ * button gets its look from theme.json's button element styles.
+ */
+
+.wp-block-dsg-contact-form {
+
+	&__form {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wp--preset--spacing--30, 1rem);
+	}
+
+	&__field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+
+		label {
+			font-family: var(--wp--preset--font-family--mono, monospace);
+			font-size: 0.75rem;
+			letter-spacing: var(--wp--custom--letter-spacing--label, 0.12em);
+			text-transform: uppercase;
+			color: var(--wp--preset--color--muted, inherit);
+		}
+
+		input,
+		textarea {
+			width: 100%;
+			padding: 0.875rem 0;
+			border: 0;
+			border-bottom: 1.5px solid var(--wp--preset--color--muted, currentcolor);
+			border-bottom-color: color-mix(in srgb, var(--wp--preset--color--muted, currentcolor) 70%, transparent);
+			border-radius: 0;
+			background: transparent;
+			color: var(--wp--preset--color--contrast, inherit);
+			font-family: var(--wp--preset--font-family--sans, inherit);
+			font-size: 1rem;
+			// line-height: 1.5;
+			resize: vertical; // Textarea only; inputs ignore it.
+			transition: border-color 0.2s, box-shadow 0.2s;
+
+			&:hover {
+				border-bottom-color: var(--wp--preset--color--muted, currentcolor);
+			}
+
+			// The theme's focus outline still shows for keyboard users;
+			// this also thickens the line in the accent color.
+			&:focus {
+				border-bottom-color: var(--wp--preset--color--accent, currentcolor);
+				box-shadow: 0 1.5px 0 var(--wp--preset--color--accent, currentcolor);
+			}
+
+			&[aria-invalid="true"] {
+				border-bottom-color: var(--wp--preset--color--danger, currentcolor);
+				box-shadow: 0 1.5px 0 var(--wp--preset--color--danger, currentcolor);
+			}
+
+			&:disabled {
+				cursor: default;
+			}
+		}
+	}
+
+	&__error {
+		margin: 0;
+		font-size: var(--wp--preset--font-size--small, 0.9375rem);
+		color: var(--wp--preset--color--danger, inherit);
+
+		&[hidden] {
+			display: none;
+		}
+	}
+
+	// Off-screen rather than display:none, which some bots check for.
+	&__trap {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+
+	&__footer {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--wp--preset--spacing--30, 1rem);
+		margin-top: 0.5rem;
+	}
+
+	&__submit {
+		cursor: pointer;
+
+		&[aria-disabled="true"] {
+			cursor: progress;
+			opacity: 0.7;
+		}
+	}
+
+	&__status {
+		flex: 1 1 14rem;
+		margin: 0;
+		font-size: var(--wp--preset--font-size--small, 0.9375rem);
+		color: var(--wp--preset--color--muted, inherit);
+
+		&.is-sent {
+			color: var(--wp--preset--color--contrast, inherit);
+		}
+
+		&.is-error {
+			color: var(--wp--preset--color--danger, inherit);
+		}
+	}
+}

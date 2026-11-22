@@ -2,13 +2,37 @@
 
 <!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} -->
 <main class="wp-block-group">
-	<!-- wp:post-title {"level":1} /-->
-	<!-- wp:post-terms {"term":"dsg_technology","separator":" · "} /-->
-	<!-- wp:post-featured-image {"align":"wide","style":{"border":{"radius":"12px"}}} /-->
-	<!-- wp:post-content {"layout":{"type":"constrained"}} /-->
-	<!-- wp:paragraph -->
-	<p><a href="/portfolio/">← All projects</a></p>
-	<!-- /wp:paragraph -->
+	<!-- wp:group {"tagName":"header","align":"wide","className":"site-page-header","style":{"spacing":{"padding":{"top":"var:preset|spacing|70","bottom":"var:preset|spacing|60"},"blockGap":"var:preset|spacing|40"}},"layout":{"type":"constrained","justifyContent":"left","contentSize":"860px"}} -->
+	<header class="wp-block-group alignwide site-page-header" style="padding-top:var(--wp--preset--spacing--70);padding-bottom:var(--wp--preset--spacing--60)">
+		<!-- wp:paragraph {"className":"site-page-header__label project-back"} -->
+		<p class="site-page-header__label project-back"><a href="/portfolio/"><span aria-hidden="true">← </span>All work</a></p>
+		<!-- /wp:paragraph -->
+		<!-- wp:post-title {"level":1,"fontSize":"display"} /-->
+		<!-- wp:post-excerpt {"excerptLength":100,"textColor":"muted","fontSize":"large"} /-->
+	</header>
+	<!-- /wp:group -->
+
+	<!-- wp:dsg/project-meta {"align":"wide"} /-->
+
+	<!-- wp:post-featured-image {"aspectRatio":"16/10","align":"wide","className":"project-cover","style":{"spacing":{"margin":{"top":"var:preset|spacing|40"}}}} /-->
+
+	<!-- wp:columns {"align":"wide","className":"project-layout","style":{"spacing":{"margin":{"top":"var:preset|spacing|80"},"blockGap":{"left":"var:preset|spacing|80"}}}} -->
+	<div class="wp-block-columns alignwide project-layout" style="margin-top:var(--wp--preset--spacing--80)">
+		<!-- wp:column {"width":"66.66%"} -->
+		<div class="wp-block-column" style="flex-basis:66.66%">
+			<!-- wp:post-content {"className":"project-content","layout":{"type":"default"}} /-->
+		</div>
+		<!-- /wp:column -->
+
+		<!-- wp:column {"width":"33.33%","className":"project-aside"} -->
+		<div class="wp-block-column project-aside" style="flex-basis:33.33%">
+			<!-- wp:dsg/tech-stack {"label":"Built with","fromProject":true} /-->
+		</div>
+		<!-- /wp:column -->
+	</div>
+	<!-- /wp:columns -->
+
+	<!-- wp:dsg/next-project {"align":"wide","style":{"spacing":{"margin":{"top":"var:preset|spacing|80","bottom":"var:preset|spacing|70"}}}} /-->
 </main>
 <!-- /wp:group -->
 

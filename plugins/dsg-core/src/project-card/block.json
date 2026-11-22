@@ -2,23 +2,21 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "dsg/project-card",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"title": "Project Card",
 	"category": "design",
 	"icon": "portfolio",
-	"description": "A portfolio project with image, title, summary, technologies and a link.",
+	"description": "A portfolio project with image, title, summary and a link. A featured card shown first in its group gets the large, full-row layout.",
 	"keywords": [ "portfolio", "project", "card" ],
 	"textdomain": "dsg-core",
 	"attributes": {
 		"title": {
 			"type": "string",
-			"source": "html",
-			"selector": ".wp-block-dsg-project-card__title-text"
+			"default": ""
 		},
 		"summary": {
 			"type": "string",
-			"source": "html",
-			"selector": ".wp-block-dsg-project-card__summary"
+			"default": ""
 		},
 		"url": {
 			"type": "string",
@@ -39,6 +37,14 @@
 			"type": "array",
 			"items": { "type": "string" },
 			"default": []
+		},
+		"featured": {
+			"type": "boolean",
+			"default": false
+		},
+		"imagePriority": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {
@@ -57,9 +63,11 @@
 		"attributes": {
 			"title": "Hellenic Red Cross",
 			"summary": "Custom WordPress theme with reusable blocks and a full content migration.",
-			"technologies": [ "WordPress", "PHP", "ACF" ]
+			"technologies": [ "WordPress", "PHP", "ACF" ],
+			"featured": true
 		}
 	},
+	"render": "file:./render.php",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css"

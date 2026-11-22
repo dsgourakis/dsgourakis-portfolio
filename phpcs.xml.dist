@@ -18,7 +18,7 @@
 
 	<!-- Lowest PHP and WordPress versions the code must support. -->
 	<config name="testVersion" value="8.2-"/>
-	<config name="minimum_wp_version" value="6.6"/>
+	<config name="minimum_wp_version" value="6.8"/>
 
 	<rule ref="WordPress">
 		<!--
@@ -52,6 +52,14 @@
 				<element value="DSG\Core"/>
 			</property>
 		</properties>
+	</rule>
+
+	<!--
+		A block's render.php is included inside a WordPress function, so its
+		variables are local, not global, and don't need the prefix.
+	-->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+		<exclude-pattern>*/render.php</exclude-pattern>
 	</rule>
 
 	<!-- Test method names describe themselves, so they don't need a docblock each. -->

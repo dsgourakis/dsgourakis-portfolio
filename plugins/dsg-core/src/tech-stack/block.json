@@ -1,0 +1,48 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "dsg/tech-stack",
+	"version": "0.2.0",
+	"title": "Tech Stack",
+	"category": "design",
+	"icon": "tag",
+	"description": "A card with a small label and a row of technology chips. Edit the chips in the sidebar, or turn on \"Use the Project's technologies\" to list them automatically on Project pages.",
+	"keywords": [ "stack", "technologies", "skills", "tools", "badges" ],
+	"textdomain": "dsg-core",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"fromProject": {
+			"type": "boolean",
+			"default": false
+		},
+		"label": {
+			"type": "string",
+			"default": "Stack"
+		},
+		"items": {
+			"type": "array",
+			"items": { "type": "string" },
+			"default": []
+		}
+	},
+	"supports": {
+		"html": false,
+		"color": {
+			"background": true,
+			"text": true
+		},
+		"spacing": {
+			"padding": true,
+			"margin": [ "top", "bottom" ]
+		}
+	},
+	"example": {
+		"attributes": {
+			"label": "Stack",
+			"items": [ "PHP", "JavaScript", "WordPress", "CSS / responsive" ]
+		}
+	},
+	"render": "file:./render.php",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

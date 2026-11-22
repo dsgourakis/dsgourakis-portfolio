@@ -1,0 +1,29 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "dsg/project-meta",
+	"version": "0.1.0",
+	"title": "Project Details",
+	"category": "theme",
+	"icon": "info-outline",
+	"description": "A row of the current Project's details: agency, year, role and a link to the live site. Fill them in under \"Project details\" in the Project's sidebar.",
+	"keywords": [ "agency", "employer", "year", "role", "live", "meta", "project" ],
+	"textdomain": "dsg-core",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"align": {
+			"type": "string",
+			"default": "wide"
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"spacing": {
+			"margin": [ "top", "bottom" ]
+		}
+	},
+	"render": "file:./render.php",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

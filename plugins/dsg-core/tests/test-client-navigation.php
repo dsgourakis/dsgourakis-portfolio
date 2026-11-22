@@ -110,4 +110,41 @@ class Test_Client_Navigation extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<span class="dsg-nav-pill" aria-hidden="true"></span><ul', $pill_menu );
 		$this->assertStringNotContainsString( 'dsg-nav-pill', $plain_menu );
 	}
+
+	public function test_admin_bar_links_are_left_out_without_the_admin_bar() {
+		add_filter( 'show_admin_bar', '__return_false' );
+
+		$this->assertNull( ClientNavigation::admin_bar_links() );
+
+		$html = do_blocks( '<!-- wp:group {"tagName":"main"} --><main class="wp-block-group"></main><!-- /wp:group -->' );
+		$this->assertStringNotContainsString( 'data-dsg-admin-bar', $html );
+	}
+
+	public function test_admin_bar_links_point_to_the_page_shown() {
+		require_once ABSPATH . WPINC . '/class-wp-admin-bar.php';
+		add_filter( 'show_admin_bar', '__return_true' );
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$page = self::factory()->post->create( array( 'post_type' => 'page' ) );
+		$this->go_to( get_permalink( $page ) );
+
+		$links = ClientNavigation::admin_bar_links();
+
+		$this->assertSame( get_edit_post_link( $page ), $links['edit']['href'] );
+		$this->assertSame( get_post_type_object( 'page' )->labels->edit_item, $links['edit']['title'] );
+		$this->assertArrayHasKey( 'site-editor', $links );
+
+		$html = do_blocks( '<!-- wp:group {"tagName":"main"} --><main class="wp-block-group"></main><!-- /wp:group -->' );
+		$this->assertStringContainsString( 'data-dsg-admin-bar=', $html );
+	}
+
+	public function test_admin_bar_has_no_edit_link_where_there_is_nothing_to_edit() {
+		require_once ABSPATH . WPINC . '/class-wp-admin-bar.php';
+		add_filter( 'show_admin_bar', '__return_true' );
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$this->go_to( home_url( '/?s=nothing' ) );
+
+		$this->assertNull( ClientNavigation::admin_bar_links()['edit'] );
+	}
 }

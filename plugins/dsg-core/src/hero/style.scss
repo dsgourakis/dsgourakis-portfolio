@@ -149,6 +149,19 @@ $ease: var(--wp--custom--easing, cubic-bezier(0.2, 0.7, 0.2, 1));
 		}
 	}
 
+	// Below 782px (same breakpoint as the phone menu): no tall min-height,
+	// and the monogram becomes a smaller, fixed-size block, centred under the
+	// text instead of stretching across the row.
+	@media (max-width: 781px) {
+		justify-content: center;
+		min-height: 0;
+
+		&__monogram {
+			flex: 0 0 14rem;
+			height: 1.1em;
+		}
+	}
+
 	// Skip the entrance animations; everything shows in its final place.
 	@media (prefers-reduced-motion: reduce) {
 

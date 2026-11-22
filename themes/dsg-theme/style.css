@@ -4,7 +4,7 @@ Theme URI: https://www.dsgourakis.com
 Author: Dimitris Sgourakis
 Author URI: https://www.dsgourakis.com
 Description: Block theme for dsgourakis.com. Design settings live in theme.json.
-Version: 0.1.0
+Version: 0.9.0
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 8.2
@@ -33,17 +33,6 @@ Text Domain: dsg-theme
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
 	outline: 3px solid var(--wp--preset--color--accent);
 	outline-offset: 3px;
-}
-
-/* Header Resume button: rounded and filled, in the normal font. */
-.site-header__cta .wp-block-button > .wp-block-button__link {
-	padding: 0.75rem 1.25rem;
-	border-radius: var(--wp--custom--radius--pill);
-	font-family: var(--wp--preset--font-family--sans);
-	font-size: var(--wp--preset--font-size--small);
-	font-weight: 500;
-	letter-spacing: normal;
-	text-transform: none;
 }
 
 /*
@@ -96,7 +85,10 @@ Text Domain: dsg-theme
 }
 
 /*
- * Header: "D.S" logo, the pill menu and the Resume button (parts/header.html).
+ * Header: "D.S" logo and the pill menu (parts/header.html). The row on the
+ * right (menu, Resume button, toggle) is the dsg/header-actions block in
+ * dsg-core; its layout and the Resume button's look are in that block's
+ * style.scss.
  */
 
 .site-logo {
@@ -111,18 +103,22 @@ Text Domain: dsg-theme
 }
 
 /*
- * Pill menu. On screens where the links are shown inline (600px and up,
- * when the mobile menu takes over), the links sit in a rounded bar and a
- * highlight slides under the current one.
+ * Pill menu. On screens 782px and up (below that, dsg/header-actions shows
+ * the phone menu instead), the links sit in a rounded bar and a highlight
+ * slides under the current one.
  *
  * The highlight (.dsg-nav-pill) is printed and positioned by the dsg-core
  * plugin (assets/client-navigation/), which passes its place and size as
  * --pill-x/y/w/h. Without JavaScript, the current link gets its own
  * background instead.
+ *
+ * The Navigation block has no overlay of its own ("overlayMenu": "never"),
+ * so the bar is the <nav> itself. "nav." because the block copies the
+ * class onto the inner <ul> too.
  */
-@media (min-width: 600px) {
+@media (min-width: 782px) {
 
-	.dsg-pill-nav .wp-block-navigation__responsive-container-content {
+	nav.dsg-pill-nav {
 		position: relative;
 		padding: 0.25rem;
 		background-color: var(--wp--preset--color--surface);
@@ -176,7 +172,8 @@ Text Domain: dsg-theme
 }
 
 /*
- * Light/dark toggle (parts/header.html, assets/js/color-scheme.js).
+ * Light/dark toggle. The button is printed by dsg-core's dsg/header-actions
+ * block; its script is assets/js/color-scheme.js.
  * Dark is the default; the light palette is swapped in by functions.php
  * when <html> has data-theme="light".
  */
@@ -223,11 +220,6 @@ Text Domain: dsg-theme
 
 :root[data-theme="light"] .color-scheme-toggle__moon {
 	display: block;
-}
-
-/* The mobile menu overlay lists the links plainly; no pill there. */
-.dsg-pill-nav .is-menu-open .dsg-nav-pill {
-	display: none;
 }
 
 /*

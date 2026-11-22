@@ -1,0 +1,214 @@
+/*
+ * Header Actions: menu, Resume button and light/dark toggle in one row,
+ * and the full-screen phone menu. The toggle's own look is in the theme's
+ * style.css, next to the scheme CSS.
+ */
+
+.site-header__actions {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: var(--wp--preset--spacing--10);
+}
+
+/*
+ * Rounded and filled, in the normal font.
+ * Colors come from theme.json's button element.
+ *
+ * Two classes on purpose: WordPress's global styles use
+ * `:root :where(.wp-element-button)`, which has the same weight as one class
+ * and is printed later, so a single class would lose.
+ */
+.site-header__actions .site-header__resume {
+	padding: 0.75rem 1.25rem;
+	border-radius: var(--wp--custom--radius--pill);
+	font-family: var(--wp--preset--font-family--sans);
+	font-size: var(--wp--preset--font-size--small);
+	font-weight: 500;
+	letter-spacing: normal;
+	text-decoration: none;
+	text-transform: none;
+	white-space: nowrap;
+}
+
+/* Round icon buttons, matching the light/dark toggle. */
+.site-menu__open,
+.site-menu__close {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	padding: 0;
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--wp--custom--radius--pill);
+	background-color: var(--wp--preset--color--surface);
+	color: var(--wp--preset--color--contrast);
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--wp--preset--color--accent);
+		color: var(--wp--preset--color--accent);
+	}
+}
+
+/* Wide screens use the Navigation block; the phone menu is never shown. */
+.site-header__actions > .site-menu__open,
+.site-menu[open] {
+	display: none;
+}
+
+/* Below 782px: menu button instead of the Navigation, toggle first. */
+@media (max-width: 781px) {
+
+	.site-header__actions {
+		flex-direction: row-reverse;
+	}
+
+	.site-header__actions > .wp-block-navigation {
+		display: none;
+	}
+
+	.site-header__actions > .site-menu__open {
+		display: inline-flex;
+	}
+
+	.site-menu[open] {
+		display: flex;
+	}
+}
+
+/*
+ * The phone menu: full screen, lined up with the header so the logo
+ * doesn't move and the close button sits where the menu button was.
+ */
+.site-menu {
+	box-sizing: border-box;
+	position: fixed;
+	inset: 0;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--60);
+	width: 100%;
+	max-width: none;
+	height: 100%;
+	max-height: none;
+	margin: 0;
+	padding:
+		var(--wp--preset--spacing--40)
+		var(--wp--style--root--padding-right, var(--wp--preset--spacing--40))
+		var(--wp--preset--spacing--50)
+		var(--wp--style--root--padding-left, var(--wp--preset--spacing--40));
+	overflow-y: auto;
+	border: 0;
+	background-color: var(--wp--preset--color--base);
+	color: var(--wp--preset--color--contrast);
+
+	&[open] {
+		animation: dsg-menu-in 0.25s var(--wp--custom--easing) both;
+	}
+
+	&::backdrop {
+		background-color: transparent;
+	}
+}
+
+/* The page behind doesn't scroll while the menu is open. */
+html:has(.site-menu[open]) {
+	overflow: hidden;
+}
+
+.site-menu__bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.site-menu__links {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border-top: 1px solid var(--wp--preset--color--border);
+}
+
+/* Each link slides up a moment after the one above it. */
+.site-menu__item,
+.site-menu__footer {
+	animation: dsg-menu-item 0.45s var(--wp--custom--easing) both;
+	animation-delay: calc(0.08s + var(--i, 0) * 0.04s);
+}
+
+.site-menu__item {
+	border-bottom: 1px solid var(--wp--preset--color--border);
+}
+
+.site-menu__link {
+	display: flex;
+	align-items: baseline;
+	gap: var(--wp--preset--spacing--30);
+	padding: var(--wp--preset--spacing--30) 0;
+	color: inherit;
+	font-size: var(--wp--preset--font-size--section);
+	font-weight: 700;
+	letter-spacing: var(--wp--custom--letter-spacing--tighter);
+	line-height: 1.1;
+	text-decoration: none;
+
+	&:hover,
+	&[aria-current="page"] {
+		color: var(--wp--preset--color--accent);
+	}
+}
+
+/* "01", "02"…: like the cards' "01 — featured" counters. */
+.site-menu__num {
+	min-width: 1.5rem;
+	color: var(--wp--preset--color--muted);
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	font-weight: 400;
+	letter-spacing: normal;
+}
+
+/* Email, Resume and the toggle, pinned to the bottom. */
+.site-menu__footer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--20);
+	margin-top: auto;
+}
+
+.site-menu__label {
+	margin: 0;
+	color: var(--wp--preset--color--muted);
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: var(--wp--preset--font-size--x-small);
+}
+
+.site-menu__email {
+	color: var(--wp--preset--color--contrast);
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: var(--wp--preset--font-size--small);
+}
+
+.site-menu__actions {
+	display: flex;
+	align-items: center;
+	gap: var(--wp--preset--spacing--10);
+	margin-top: var(--wp--preset--spacing--20);
+}
+
+@keyframes dsg-menu-in {
+
+	from {
+		opacity: 0;
+	}
+}
+
+@keyframes dsg-menu-item {
+
+	from {
+		opacity: 0;
+		transform: translateY(0.75rem);
+	}
+}

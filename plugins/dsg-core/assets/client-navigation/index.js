@@ -18,7 +18,12 @@
  *
  * Anything unexpected falls back to a normal page load.
  */
-import { isCurrentPath, isRoutableLink, shouldHandleClick } from './utils.js';
+import {
+	decodeCloudflareEmail,
+	isCurrentPath,
+	isRoutableLink,
+	shouldHandleClick,
+} from './utils.js';
 
 // "nav." matters: the Navigation block also copies its custom class onto
 // the inner <ul>, and the pill lives in the <nav>, outside that list.
@@ -46,8 +51,11 @@ async function router() {
  * @param {string} pagePath Path of the page being shown.
  */
 function markCurrentLinks( pagePath ) {
+	// The Navigation block's links, and the phone menu's (dsg/header-actions).
 	document
-		.querySelectorAll( '.wp-block-navigation-item > a[href]' )
+		.querySelectorAll(
+			'.wp-block-navigation-item > a[href], .site-menu__item > a[href]'
+		)
 		.forEach( ( link ) => {
 			const url = new URL( link.href, window.location.href );
 			const current =
@@ -110,17 +118,104 @@ function placePills( animate ) {
 	} );
 }
 
+/* Things outside the router's reach ------------------------------------ */
+
+const PROTECTED_EMAIL_LINK = 'a[href^="/cdn-cgi/l/email-protection#"]';
+
+/**
+ * Put back email addresses hidden by Cloudflare (see decodeCloudflareEmail).
+ *
+ * Only text and attributes are changed, never elements: the router keeps
+ * its own copy of the page's elements and would lose track of new ones.
+ *
+ * @param {HTMLElement} root Where to look.
+ */
+function restoreEmails( root ) {
+	root.querySelectorAll( '[data-cfemail]' ).forEach( ( element ) => {
+		const email = decodeCloudflareEmail(
+			element.getAttribute( 'data-cfemail' )
+		);
+		const text = [ ...element.childNodes ].find(
+			( node ) => node.nodeType === window.Node.TEXT_NODE
+		);
+		if ( email && text ) {
+			text.data = email;
+			element.removeAttribute( 'data-cfemail' );
+		}
+	} );
+
+	root.querySelectorAll( PROTECTED_EMAIL_LINK ).forEach( ( link ) => {
+		const email = decodeCloudflareEmail(
+			link.getAttribute( 'href' ).split( '#' )[ 1 ]
+		);
+		if ( email ) {
+			link.setAttribute( 'href', `mailto:${ email }` );
+		}
+	} );
+}
+
+/**
+ * Point the admin bar's "Edit Page" and "Edit Site" at the page now shown.
+ * The links come from <main> (see ClientNavigation::admin_bar_links()).
+ *
+ * @param {HTMLElement} main The page's <main>.
+ */
+function syncAdminBar( main ) {
+	const root = document.getElementById( 'wp-admin-bar-root-default' );
+	const json = main.getAttribute( 'data-dsg-admin-bar' );
+	if ( ! root || ! json ) {
+		return;
+	}
+
+	let links;
+	try {
+		links = JSON.parse( json );
+	} catch {
+		return;
+	}
+
+	Object.entries( links ).forEach( ( [ id, link ] ) => {
+		let item = document.getElementById( `wp-admin-bar-${ id }` );
+
+		// The first page had no such link: add it, as WordPress would.
+		if ( ! item && link ) {
+			item = document.createElement( 'li' );
+			item.id = `wp-admin-bar-${ id }`;
+			item.innerHTML = '<a class="ab-item"></a>';
+			root.append( item );
+		}
+		if ( ! item ) {
+			return;
+		}
+
+		item.hidden = ! link;
+		const anchor = item.querySelector( ':scope > a' );
+		if ( link && anchor ) {
+			anchor.href = link.href;
+			anchor.textContent = link.title;
+		}
+	} );
+}
+
+/**
+ * Fix what the router doesn't update after it swaps <main>.
+ *
+ * @param {HTMLElement} main The page's <main>.
+ */
+function afterSwap( main ) {
+	restoreEmails( main );
+	syncAdminBar( main );
+}
+
 /* Navigation ----------------------------------------------------------- */
 
 /**
- * Close the mobile menu overlay if it's open.
+ * Close the phone menu (the dsg/header-actions block's dialog) if it's open.
+ * Closing it hands focus back to the menu button; focusNewContent() then
+ * moves it on to the new page.
  */
 function closeMobileMenu() {
-	document
-		.querySelector(
-			'.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__responsive-container-close'
-		)
-		?.click();
+	document.querySelector( 'dialog.site-menu[open]' )?.close();
 }
 
 /**
@@ -207,6 +302,7 @@ async function navigate( href, filterHref = '' ) {
 		return;
 	}
 
+	afterSwap( main );
 	markCurrentLinks( window.location.pathname );
 	placePills( true );
 	closeMobileMenu();
@@ -238,6 +334,11 @@ document.addEventListener( 'click', ( event ) => {
 
 	event.preventDefault();
 
+	// A link in the phone menu: close it now, not once the page has loaded.
+	if ( link.closest( '.site-menu' ) ) {
+		closeMobileMenu();
+	}
+
 	// Slide the pill right away, while the page loads.
 	const nav = link.closest( PILL_NAV );
 	if ( nav ) {
@@ -267,6 +368,28 @@ window.addEventListener( 'popstate', () => {
 	markCurrentLinks( window.location.pathname );
 	placePills( true );
 } );
+
+// The router swaps a back/forward page in on its own schedule, so watch
+// <main> for it. (Link clicks call afterSwap() directly, in navigate().)
+const region = document.querySelector( REGION );
+if ( region ) {
+	let pending = false;
+	new window.MutationObserver( () => {
+		if ( pending ) {
+			return;
+		}
+		pending = true;
+		window.requestAnimationFrame( () => {
+			pending = false;
+			afterSwap( region );
+		} );
+	} ).observe( region, {
+		childList: true,
+		subtree: true,
+		attributes: true,
+		attributeFilter: [ 'data-dsg-admin-bar' ],
+	} );
+}
 
 // Place the pills without sliding: on load, once fonts change the link
 // widths, and whenever the menu changes size.

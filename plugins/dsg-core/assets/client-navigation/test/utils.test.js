@@ -1,4 +1,9 @@
-import { isCurrentPath, isRoutableLink, shouldHandleClick } from '../utils';
+import {
+	decodeCloudflareEmail,
+	isCurrentPath,
+	isRoutableLink,
+	shouldHandleClick,
+} from '../utils';
 
 // A fake current page, so the tests don't depend on jsdom's own URL.
 const location = new URL( 'https://example.com/portfolio/' );
@@ -62,6 +67,10 @@ describe( 'isRoutableLink', () => {
 		[ 'a download', link( '/about/', { download: '' } ) ],
 		[ 'wp-admin', link( '/wp-admin/edit.php' ) ],
 		[ 'the login page', link( '/wp-login.php' ) ],
+		[
+			'a Cloudflare-hidden email',
+			link( '/cdn-cgi/l/email-protection#422a27' ),
+		],
 		[ 'a nonce link', link( '/?action=logout&_wpnonce=abc' ) ],
 		[ 'a hash link', link( '#work' ) ],
 		[ 'a section of the same page', link( '/portfolio/#work' ) ],
@@ -97,4 +106,30 @@ describe( 'shouldHandleClick', () => {
 			shouldHandleClick( click( overrides ), link( '/about/' ), location )
 		).toBe( false );
 	} );
+} );
+
+describe( 'decodeCloudflareEmail', () => {
+	// Codes made the way Cloudflare does: a key byte, then each byte XOR the key.
+	it( 'decodes an address', () => {
+		expect(
+			decodeCloudflareEmail(
+				'422a272e2e2d022631252d373023292b316c212d2f'
+			)
+		).toBe( 'hello@dsgourakis.com' );
+	} );
+
+	it( 'decodes non-ASCII addresses', () => {
+		expect(
+			decodeCloudflareEmail(
+				'9c522852235226522552205232dcf9e4fdf1ecf0f9b2fbee'
+			)
+		).toBe( 'δοκιμή@example.gr' );
+	} );
+
+	it.each( [ '', '42', 'zz11', '4211a', '42ff' ] )(
+		'returns nothing for the invalid code "%s"',
+		( hex ) => {
+			expect( decodeCloudflareEmail( hex ) ).toBe( '' );
+		}
+	);
 } );

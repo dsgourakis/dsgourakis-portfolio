@@ -6,31 +6,14 @@
 		<a class="site-logo" href="/" rel="home" aria-label="Dimitris Sgourakis, home">D<span class="site-logo__dot">.</span>S</a>
 		<!-- /wp:html -->
 
-		<!-- wp:group {"style":{"spacing":{"blockGap":"var:preset|spacing|10"}},"layout":{"type":"flex","flexWrap":"nowrap"}} -->
-		<div class="wp-block-group">
-			<!-- wp:navigation {"className":"dsg-pill-nav","overlayMenu":"mobile","overlayBackgroundColor":"base","overlayTextColor":"contrast","layout":{"type":"flex","justifyContent":"right"}} -->
+		<!-- wp:dsg/header-actions {"email":"hello@dsgourakis.com"} -->
+			<!-- wp:navigation {"className":"dsg-pill-nav","overlayMenu":"never","layout":{"type":"flex","justifyContent":"right"}} -->
 				<!-- wp:navigation-link {"label":"Home","url":"/","kind":"custom","isTopLevelLink":true} /-->
 				<!-- wp:navigation-link {"label":"Work","url":"/portfolio/","kind":"custom","isTopLevelLink":true} /-->
 				<!-- wp:navigation-link {"label":"About","url":"/about/","kind":"custom","isTopLevelLink":true} /-->
 				<!-- wp:navigation-link {"label":"Contact","url":"/contact/","kind":"custom","isTopLevelLink":true} /-->
 			<!-- /wp:navigation -->
-
-			<!-- wp:buttons {"className":"site-header__cta"} -->
-			<div class="wp-block-buttons site-header__cta">
-				<!-- wp:button {"metadata":{"bindings":{"url":{"source":"dsg-core/resume"}}}} -->
-				<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" target="_blank" rel="noreferrer noopener">Resume <span aria-hidden="true">↗</span><span class="screen-reader-text"> (PDF, opens in a new tab)</span></a></div>
-				<!-- /wp:button -->
-			</div>
-			<!-- /wp:buttons -->
-
-			<!-- wp:html -->
-			<button type="button" class="color-scheme-toggle" aria-label="Dark mode" aria-pressed="true" hidden>
-				<svg class="color-scheme-toggle__sun" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-				<svg class="color-scheme-toggle__moon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-			</button>
-			<!-- /wp:html -->
-		</div>
-		<!-- /wp:group -->
+		<!-- /wp:dsg/header-actions -->
 	</div>
 	<!-- /wp:group -->
 </header>

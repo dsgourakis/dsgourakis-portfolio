@@ -34,6 +34,11 @@ class ClientNavigation {
 	public const PILL_CLASS = 'dsg-pill-nav';
 
 	/**
+	 * Admin bar items that change from page to page ("Edit Page", "Edit Site").
+	 */
+	public const ADMIN_BAR_NODES = array( 'edit', 'site-editor' );
+
+	/**
 	 * Hook into WordPress.
 	 *
 	 * @return void
@@ -95,9 +100,47 @@ class ClientNavigation {
 			if ( $queried instanceof \WP_Post && is_page() ) {
 				$tags->set_attribute( 'data-page', $queried->post_name );
 			}
+
+			$admin_bar = self::admin_bar_links();
+			if ( null !== $admin_bar ) {
+				$tags->set_attribute( 'data-dsg-admin-bar', wp_json_encode( $admin_bar ) );
+			}
 		}
 
 		return $tags->get_updated_html();
+	}
+
+	/**
+	 * The admin bar links that depend on the page being shown, for the JS
+	 * to copy into the admin bar after a client-side page change.
+	 *
+	 * The admin bar is outside <main>, so the router never updates it:
+	 * without this, "Edit Page" would keep pointing to the first page
+	 * loaded. The links are built by WordPress's own admin bar functions,
+	 * on a separate admin bar, so they match what a full page load shows.
+	 *
+	 * @return array|null Each node's title and href (null when the page has
+	 *                    no such link), or null when the admin bar is hidden.
+	 */
+	public static function admin_bar_links(): ?array {
+		if ( ! is_admin_bar_showing() || ! class_exists( 'WP_Admin_Bar' ) ) {
+			return null;
+		}
+
+		$bar = new \WP_Admin_Bar();
+		wp_admin_bar_edit_menu( $bar );
+		wp_admin_bar_edit_site_menu( $bar );
+
+		$links = array();
+		foreach ( self::ADMIN_BAR_NODES as $id ) {
+			$node         = $bar->get_node( $id );
+			$links[ $id ] = $node ? array(
+				'title' => wp_strip_all_tags( $node->title ),
+				'href'  => $node->href,
+			) : null;
+		}
+
+		return $links;
 	}
 
 	/**
@@ -201,7 +244,7 @@ class ClientNavigation {
 	 *
 	 * @return string
 	 */
-	private static function current_path(): string {
+	public static function current_path(): string {
 		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
 
 		return wp_parse_url( $uri, PHP_URL_PATH ) ?? '/';

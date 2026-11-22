@@ -139,7 +139,7 @@ add_action( 'init', 'dsg_theme_register_block_styles' );
  * one with the toggle; that choice is saved in localStorage and wins from
  * then on. Dark is the fallback: theme.json holds the dark palette. In light,
  * <html> gets data-theme="light" and the light palette from
- * styles/light.json is swapped in as CSS variables. The button is in parts/header.html and its script in
+ * styles/light.json is swapped in as CSS variables. The button is printed by dsg-core's dsg/header-actions block and its script is in
  * assets/js/color-scheme.js.
  */
 

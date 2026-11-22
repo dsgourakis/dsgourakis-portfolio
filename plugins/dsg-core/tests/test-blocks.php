@@ -24,9 +24,62 @@ class Test_Blocks extends WP_UnitTestCase {
 	public function test_blocks_are_registered() {
 		$registry = WP_Block_Type_Registry::get_instance();
 
-		foreach ( array( 'dsg/contact-form', 'dsg/hero', 'dsg/project-card', 'dsg/project-grid', 'dsg/next-project', 'dsg/project-meta', 'dsg/section-header', 'dsg/stat', 'dsg/stats', 'dsg/tech-stack' ) as $name ) {
+		foreach ( array( 'dsg/contact-form', 'dsg/header-actions', 'dsg/hero', 'dsg/project-card', 'dsg/project-grid', 'dsg/next-project', 'dsg/project-meta', 'dsg/section-header', 'dsg/stat', 'dsg/stats', 'dsg/tech-stack' ) as $name ) {
 			$this->assertTrue( $registry->is_registered( $name ), "$name is not registered. Did you run \"npm run build\"?" );
 		}
+	}
+
+	public function test_header_actions_renders_menu_resume_and_toggle() {
+		$pdf = self::factory()->attachment->create(
+			array(
+				'post_mime_type' => 'application/pdf',
+				'file'           => 'resume.pdf',
+			)
+		);
+		update_option( \DSG\Core\Settings\ResumeLink::OPTION, $pdf );
+
+		$html = do_blocks( '<!-- wp:dsg/header-actions --><!-- wp:paragraph --><p>Menu here</p><!-- /wp:paragraph --><!-- /wp:dsg/header-actions -->' );
+
+		$this->assertStringContainsString( 'site-header__actions', $html );
+		$this->assertStringContainsString( 'Menu here', $html );
+		$this->assertStringContainsString( 'class="site-header__resume wp-element-button" href="' . home_url( '/cv.pdf' ) . '"', $html );
+		$this->assertStringContainsString( 'class="color-scheme-toggle"', $html );
+	}
+
+	public function test_header_actions_phone_menu_lists_the_navigation_links() {
+		$this->go_to( '/about/' );
+		$_SERVER['REQUEST_URI'] = '/about/';
+
+		$html = do_blocks(
+			'<!-- wp:dsg/header-actions {"email":"hello@example.com"} -->'
+			. '<!-- wp:navigation {"overlayMenu":"never"} -->'
+			. '<!-- wp:navigation-link {"label":"Home","url":"/","kind":"custom"} /-->'
+			. '<!-- wp:navigation-link {"label":"About","url":"/about/","kind":"custom"} /-->'
+			. '<!-- /wp:navigation -->'
+			. '<!-- /wp:dsg/header-actions -->'
+		);
+
+		$this->assertStringContainsString( '<dialog id="site-menu" class="site-menu"', $html );
+		$this->assertStringContainsString( 'commandfor="site-menu" command="show-modal"', $html );
+		$this->assertMatchesRegularExpression( '#<span class="site-menu__num" aria-hidden="true">01</span>\s*Home#', $html );
+		$this->assertMatchesRegularExpression( '#class="site-menu__link" href="/about/" aria-current="page">\s*<span class="site-menu__num" aria-hidden="true">02</span>\s*About#', $html );
+		$this->assertStringContainsString( 'href="mailto:hello@example.com"', $html );
+	}
+
+	public function test_header_actions_has_no_phone_menu_without_links() {
+		$html = do_blocks( '<!-- wp:dsg/header-actions /-->' );
+
+		$this->assertStringNotContainsString( '<dialog', $html );
+		$this->assertStringNotContainsString( 'site-menu__open', $html );
+	}
+
+	public function test_header_actions_hides_resume_without_one() {
+		delete_option( \DSG\Core\Settings\ResumeLink::OPTION );
+
+		$html = do_blocks( '<!-- wp:dsg/header-actions /-->' );
+
+		$this->assertStringNotContainsString( 'site-header__resume', $html );
+		$this->assertStringContainsString( 'class="color-scheme-toggle"', $html );
 	}
 
 	public function test_project_card_renders_title_link_and_cta() {

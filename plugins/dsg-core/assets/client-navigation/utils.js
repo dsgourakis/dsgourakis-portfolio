@@ -77,6 +77,8 @@ export function isRoutableLink( link, location = window.location ) {
 		// Admin, login and anything with a security token.
 		! url.pathname.startsWith( '/wp-admin' ) &&
 		! url.pathname.startsWith( '/wp-login.php' ) &&
+		// Cloudflare's own URLs, like a hidden email address (see decodeCloudflareEmail).
+		! url.pathname.startsWith( '/cdn-cgi/' ) &&
 		! url.searchParams.has( '_wpnonce' ) &&
 		// A jump within this page ("#work"): the browser scrolls, no new page needed.
 		! href.startsWith( '#' ) &&
@@ -101,4 +103,40 @@ function isSamePageAnchor( url, location ) {
 		url.pathname === location.pathname &&
 		url.search === location.search
 	);
+}
+
+/**
+ * Decode an email address hidden by Cloudflare's Email Address Obfuscation.
+ *
+ * Cloudflare replaces each address in the HTML with "[email protected]"
+ * and a hex code, and its script puts the address back on page load. It
+ * doesn't run again when the router shows another page, so the client
+ * navigation decodes new addresses itself.
+ *
+ * The code's first byte is a key; every following byte, XOR the key, is
+ * one byte of the address (UTF-8).
+ *
+ * @param {string} hex The hex code (data-cfemail, or the link's #hash).
+ * @return {string} The address, or '' when the code isn't valid.
+ */
+export function decodeCloudflareEmail( hex ) {
+	if ( ! /^(?:[0-9a-f]{2}){2,}$/i.test( hex ) ) {
+		return '';
+	}
+
+	const key = parseInt( hex.slice( 0, 2 ), 16 );
+	let encoded = '';
+	for ( let i = 2; i < hex.length; i += 2 ) {
+		// XOR is how Cloudflare hides each byte.
+		// eslint-disable-next-line no-bitwise
+		const byte = parseInt( hex.slice( i, i + 2 ), 16 ) ^ key;
+		encoded += `%${ byte.toString( 16 ).padStart( 2, '0' ) }`;
+	}
+
+	try {
+		// Turns the bytes back into text, and fails on bytes that aren't UTF-8.
+		return decodeURIComponent( encoded );
+	} catch {
+		return '';
+	}
 }

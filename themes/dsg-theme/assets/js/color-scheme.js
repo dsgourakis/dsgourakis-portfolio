@@ -1,5 +1,5 @@
 /**
- * Light/dark toggle (the button in parts/header.html).
+ * Light/dark toggle (the button printed by dsg-core's dsg/header-actions block).
  *
  * Until the visitor clicks it, the site follows their system setting
  * (prefers-color-scheme), including when that changes while the page is

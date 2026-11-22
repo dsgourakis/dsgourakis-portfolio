@@ -19,4 +19,4 @@ Thumbs.db
 .wp-env.override.json
 /uploads/
 /docs/*
-/scripts/pull-db.sh
+/scripts/*

@@ -18,11 +18,5 @@ Thumbs.db
 .phpunit.result.cache
 .wp-env.override.json
 /uploads/
-/docs/todo
-/docs/deployment.md
-/docs/portfolio-remake-plan.md
-/docs/launch-checklist.md
-/docs/header-and-navigation.md
-/docs/contact-form-mail.md
-/docs/project-details-guide.md
+/docs/*
 /scripts/pull-db.sh

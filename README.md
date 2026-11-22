@@ -61,8 +61,8 @@ Code moves up through Git. Content (the database and uploads) only ever moves do
 - [x] `tech-stack`, `project-grid` and `metrics` blocks
 - [x] Contact form backed by a REST endpoint
 - [x] Light/dark toggle that respects the system setting (dark as fallback, choice remembered)
-- [ ] Accessibility statement and automated a11y checks in CI
-- [ ] Lighthouse 95+ across the board
+- [x] Accessibility statement and automated a11y checks in CI
+- [x] Lighthouse 95+ across the board
 
 ## License
 

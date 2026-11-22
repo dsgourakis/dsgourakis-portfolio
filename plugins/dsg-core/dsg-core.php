@@ -3,7 +3,7 @@
  * Plugin Name:       DSG Core
  * Plugin URI:        https://www.dsgourakis.com
  * Description:       Custom post types, blocks and site functionality for dsgourakis.com.
- * Version:           0.1.0
+ * Version:           0.9.1
  * Requires at least: 6.8
  * Requires PHP:      8.2
  * Author:            Dimitris Sgourakis
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'DSG_CORE_VERSION', '0.1.0' );
+define( 'DSG_CORE_VERSION', '0.9.1' );
 define( 'DSG_CORE_FILE', __FILE__ );
 define( 'DSG_CORE_DIR', plugin_dir_path( __FILE__ ) );
 

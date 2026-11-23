@@ -7,6 +7,7 @@
 
 namespace DSG\Core;
 
+use DSG\Core\Analytics\CloudflareAnalytics;
 use DSG\Core\Blocks\Blocks;
 use DSG\Core\Blocks\Copyright;
 use DSG\Core\Blocks\PageLabel;
@@ -73,6 +74,7 @@ final class Plugin {
 		( new Mail() )->register_hooks();
 		( new ContactEndpoint() )->register_hooks();
 		( new FallbackHandler() )->register_hooks();
+		( new CloudflareAnalytics() )->register_hooks();
 
 		// SEO plugins print their own tags; never print them twice.
 		if ( ! self::has_seo_plugin() ) {

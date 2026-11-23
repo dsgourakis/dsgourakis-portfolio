@@ -1,9 +1,14 @@
-# CI: checks every change. Runs on pull requests and on pushes to feature branches.
+# CI: checks every change. Runs on pushes to feature branches.
 # deploy.yml also calls this workflow before deploying, so main/develop are checked there.
+#
+# Pull requests are not checked separately: the branch was already checked
+# when it was pushed, and checking the same code again only adds waiting.
+#
+# Only the checks for the kind of files that changed run (PHP, JS, CSS).
+# A change to the workflows, or a manual run, checks everything.
 name: CI
 
 on:
-  pull_request:
   push:
     branches-ignore:
       - main
@@ -15,8 +20,54 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Lint and build
+  changes:
+    name: Detect changed files
+    runs-on: ubuntu-latest
+    outputs:
+      php: ${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.php == 'true' }}
+      js: ${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.js == 'true' }}
+      css: ${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.css == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        if: github.event_name != 'workflow_dispatch'
+        with:
+          filters: |
+            shared: &shared
+              - '.github/workflows/**'
+            php:
+              - *shared
+              - '**/*.php'
+              - '**/block.json'
+              - '**/composer.json'
+              - '**/composer.lock'
+              - 'phpcs.xml.dist'
+              - 'phpunit.xml.dist'
+              - '.wp-env.json'
+            js:
+              - *shared
+              - '**/*.js'
+              - '**/*.jsx'
+              - '**/*.ts'
+              - '**/*.tsx'
+              - '**/block.json'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'webpack.config.js'
+              - '.nvmrc'
+            css:
+              - *shared
+              - '**/*.css'
+              - '**/*.scss'
+              - 'package.json'
+              - 'package-lock.json'
+
+  php-lint:
+    name: PHP coding standards
+    needs: changes
+    if: needs.changes.outputs.php == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,25 +78,30 @@ jobs:
           tools: composer:v2
           coverage: none
 
+      - name: Install PHP tools
+        run: composer install --no-interaction --no-progress
+
+      - name: PHPCS
+        run: composer lint
+
+  js:
+    name: JavaScript lint, tests and build
+    needs: changes
+    if: needs.changes.outputs.js == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Install PHP tools
-        run: composer install --no-interaction --no-progress
-
       - name: Install JS tools
         run: npm ci
 
-      - name: PHP coding standards (PHPCS)
-        run: composer lint
-
       - name: JavaScript lint
         run: npm run lint:js
-
-      - name: CSS lint
-        run: npm run lint:css
 
       - name: JavaScript unit tests (Jest)
         run: npm run test:js
@@ -53,10 +109,30 @@ jobs:
       - name: Build blocks
         run: npm run build
 
+  css-lint:
+    name: CSS lint
+    needs: changes
+    if: needs.changes.outputs.css == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install JS tools
+        run: npm ci
+
+      - name: CSS lint
+        run: npm run lint:css
+
   phpunit:
     name: PHPUnit
+    needs: changes
+    if: needs.changes.outputs.php == 'true'
     runs-on: ubuntu-latest
-    needs: lint
     steps:
       - uses: actions/checkout@v4
 

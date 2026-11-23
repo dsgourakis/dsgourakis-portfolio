@@ -1,5 +1,10 @@
 # Deploy: push to `develop` → staging, push to `main` → production.
-# Nothing is deployed unless all CI checks pass first.
+# Nothing is deployed unless CI passes first (only the checks for the kind of
+# files that changed run; see ci.yml).
+#
+# Small changes can be pushed straight to `main`: they are still checked
+# before production. Use `develop` + a pull request for bigger work you want
+# to try on staging first.
 #
 # Setup (once), in GitHub → Settings → Environments:
 #   Create two environments: "staging" and "production".
